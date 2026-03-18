@@ -1,0 +1,10 @@
+{
+  "allowedOrigins": [
+    "http://localhost:3000",
+    "https://968a-223-181-30-81.ngrok-free.app"
+  ],
+  "allowedHosts": [
+    "localhost",
+    "968a-223-181-30-81.ngrok-free.app"
+  ]
+}

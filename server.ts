@@ -3,14 +3,30 @@ import { createServer as createViteServer } from "vite";
 import { Server } from "socket.io";
 import { createServer } from "http";
 import path from "path";
+import fs from "fs";
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
   const httpServer = createServer(app);
+
+  let allowedOrigins: string[] | string = "*";
+  try {
+    const configPath = path.join(process.cwd(), "config.json");
+    if (fs.existsSync(configPath)) {
+      const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+      if (config.allowedOrigins && Array.isArray(config.allowedOrigins)) {
+        allowedOrigins = config.allowedOrigins;
+        console.log("Loaded allowed origins from config:", allowedOrigins);
+      }
+    }
+  } catch (e) {
+    console.error("Failed to load config.json", e);
+  }
+
   const io = new Server(httpServer, {
     cors: {
-      origin: "*",
+      origin: allowedOrigins,
       methods: ["GET", "POST"]
     }
   });
