@@ -1,0 +1,5 @@
+{
+  "name": "VR Screen Share",
+  "description": "Stream your PC screen to your smartphone in VR with minimal latency.",
+  "requestFramePermissions": []
+}
