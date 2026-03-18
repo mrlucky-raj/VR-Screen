@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import {defineConfig, loadEnv} from 'vite';
 
-let allowedHosts: string[] | boolean = true;
+let allowedHosts: string[] | true = true;
 try {
   const configPath = path.resolve(__dirname, 'config.json');
   if (fs.existsSync(configPath)) {

@@ -55,6 +55,12 @@ export default function Receiver({ onBack }: { onBack: () => void }) {
       };
 
       pc.ontrack = (event) => {
+        if (event.receiver) {
+          // Attempt to reduce buffering latency
+          // @ts-ignore
+          event.receiver.playoutDelayHint = 0;
+        }
+
         if (event.streams && event.streams[0]) {
           const receivedStream = event.streams[0];
           setStream(receivedStream);

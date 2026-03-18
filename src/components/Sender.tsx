@@ -26,7 +26,7 @@ export default function Sender({ onBack }: { onBack: () => void }) {
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: {
           displaySurface: 'monitor',
-          frameRate: { max: 60 },
+          frameRate: { ideal: 60, max: 60 },
           width: { ideal: 1920, max: 1920 },
           height: { ideal: 1080, max: 1080 }
         },
@@ -108,7 +108,25 @@ export default function Sender({ onBack }: { onBack: () => void }) {
       }
     };
 
-    streamRef.current.getTracks().forEach(track => pc.addTrack(track, streamRef.current!));
+    streamRef.current.getTracks().forEach(track => {
+      if (track.kind === 'video') {
+        // Hint to the browser that we want smooth motion (latency/framerate) over resolution
+        track.contentHint = 'motion';
+      }
+      
+      const sender = pc.addTrack(track, streamRef.current!);
+      
+      // Attempt to set degradation preference to maintain-framerate
+      try {
+        const params = sender.getParameters();
+        if (params) {
+          params.degradationPreference = 'maintain-framerate';
+          sender.setParameters(params).catch((e) => console.log('setParameters error:', e));
+        }
+      } catch (e) {
+        console.log('Could not set degradationPreference:', e);
+      }
+    });
 
     pc.onicecandidate = (event) => {
       if (event.candidate && socketRef.current) {
